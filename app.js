@@ -2,8 +2,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const hostname = 'localhost';
-const port = 3000;
+const hostname = process.env.RDS_HOSTNAME;
+const port = process.env.RDS_PORT;
 
 const server = http.createServer((req, res) => {
     console.log('Request for ' + req.url + ' by method ' + req.method);
