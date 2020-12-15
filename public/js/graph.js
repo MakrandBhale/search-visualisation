@@ -1,3 +1,5 @@
+const constantWeight = 1;
+const initialCost = 999999;
 class Graph {
     constructor() {
         this.nodes = [];
@@ -17,6 +19,24 @@ class Graph {
 
 let graph;
 
+class Edge {
+    constructor(source, dest, weight) {
+        this.source = source;
+        this.dest = dest;
+        if (weight === undefined)
+            this.weight = constantWeight;
+        else
+            this.weight = weight;
+    }
+
+    setWeight(weight) {
+        this.weight = weight;
+    }
+
+    getWeight() {
+        return this.weight;
+    }
+}
 
 class Node {
     constructor(visualBlock, row, col) {
@@ -25,11 +45,18 @@ class Node {
         this.col = col;
         this.edgeList = new Array();
         this.visited = false;
+        if (visualBlock.blockType === BlockType.SOURCE)
+            this.cost = 0;
+        else
+            this.cost = initialCost;
     }
 
-    addEdge(node) {
+    addEdge(node, weight) {
+         
+        var edge = new Edge(this, node, weight);
+
         if(node.visualBlock.meta.blockType != BlockType.WALL) {
-            this.edgeList.push(node);
+            this.edgeList.push(edge);
         }
     }
 
@@ -83,7 +110,7 @@ function prepEdges() {
         }        
     }
     console.log("Edges prepped");
-    console.log(graph.sourceNode.edgeList);
+    //console.log(graph.sourceNode.edgeList);
 }
 
 
@@ -93,7 +120,11 @@ function attemptToAddEdge(indexArr, node) {
     
     let neighbourNode = graph.nodes[indexArr[0]][indexArr[1]];
     //console.log(neighbourNode)
-    node.addEdge(neighbourNode);
+    if (neighbourNode.visualBlock.meta.blockType === BlockType.WEIGHTED) {
+        node.addEdge(neighbourNode, parseInt(neighbourNode.visualBlock.meta.customWeight));    
+        return;
+    }
+    node.addEdge(neighbourNode, parseInt(node.visualBlock.meta.customWeight));
 }
 
 function isWithinBounds(bound) {
@@ -119,13 +150,13 @@ function pause() {
 
 function test(node) {
     for(let i = 0; i < node.edgeList.length; i++) {
-        if(node.edgeList[i].visited) continue;
+        if(node.edgeList[i].dest.visited) continue;
         
-        node.edgeList[i].visited = true;
+        node.edgeList[i].dest.visited = true;
         colorMeBlue(node.edgeList[i]);
 
         setTimeout(function() {
-            test(node.edgeList[i]);
+            test(node.edgeList[i].dest);
         }, 300);
         
     }
@@ -139,9 +170,9 @@ function colorMeBlue(node) {
 
     
     var anim = Raphael.animation( { 
-        0.25: {transform: "s1.15", fill: GREEN_SECONDARY}, 
-        0.5: { transform: "s1.10", fill: GREEN_SECONDARY }, 
-        0.75: { transform: 's1.05', fill: GREEN_LIGHT  }, 
+        0.25: {transform: "s1.15", fill: SECONDARY_COLOR}, 
+        0.5: { transform: "s1.10", fill:  PRIMARY_LIGHT}, 
+        0.75: { transform: 's1.05', fill:  PRIMARY_LIGHT }, 
         1: { transform: 's1'} 
       }, 300 );
     node.visualBlock.toFront();

@@ -12,7 +12,7 @@
         <!-- <div class="container">
             <button onclick="pickSourceNode()">Pick Source Node</button>
             <button onclick="pickDestNode()">Pick Destination Node</button>
-        </div>         -->
+        </div>-->
 
         <div class="container">
             <lable for="algos">Choose an algorithm</lable>
@@ -24,18 +24,31 @@
 
             </select>
         </div>
+        <div class="container">
+            <label class="switch">
+                <input type="checkbox" id="add_weight_checkbox">
+                Add weighted nodes on click.
+            </label>
+
+        </div>
         <div class = "container">
             <button onclick="start()">Start!</button>
-            <!-- <button onclick="redraw()">Reset</button>
-            <button onclick="test()">Test</button> -->
+            <!-- <button onclick="redraw()">Reset</button> -->
+            <button onclick="test()">Test</button>
+
         </div>
     </div>
     
     <div id="universe"></div>
     <script src="js/raphael.min.js"></script>
+    <script src="js/colors.js"></script>
+    
     <script src="js/board.js"></script>
     <script src="js/graph.js"></script>
     <script src="js/ds/queue.js"></script>
+    <script src="js/ds/Stack.js"></script>
+
+    <script src="js/ds/PriorityQueue.js"></script>
     <script src="js/algo.js"></script>
     
 </body>
