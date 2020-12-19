@@ -1,40 +1,40 @@
 const universe = document.getElementById('universe');
-var paper = new Raphael(universe, window.innerWidth, window.innerHeight); //option (b)
+let paper = new Raphael(universe, window.innerWidth, window.innerHeight); //option (b)
 const BLOCK_DIMEN = 50;
-var blocks = paper.set();
-var mouseDown = false;
-var pickingSourceNode = false;
-var pickingDestNode = false;
+let blocks = paper.set();
+let mouseDown = false;
+let pickingSourceNode = false;
+let pickingDestNode = false;
 const BlockType = Object.freeze({"SOURCE":1, "DEST":2, "NORMAL":3, "WALL": 4, "WEIGHTED": 5});
-var blockMatrix = [];
+let blockMatrix = [];
 const CUSTOM_WEIGHT = 15;
 const STOCK_WEIGHT = 1;
 
 
 
 window.onload = function() {
-    // var paper = new Raphael(document.getElementById('canvas_container'), 500, 500);
-    //var circle = paper.circle(100, 100, 80);
+    // let paper = new Raphael(document.getElementById('canvas_container'), 500, 500);
+    //let circle = paper.circle(100, 100, 80);
     drawBoard();
 
 }
 
 function drawBoard() {
-    var totalCols = window.innerWidth/BLOCK_DIMEN;
-    var totalRows = window.innerHeight/BLOCK_DIMEN;
+    let totalCols = window.innerWidth/BLOCK_DIMEN;
+    let totalRows = window.innerHeight/BLOCK_DIMEN;
 
-    var centerRow = parseInt(totalRows / 2);
+    let centerRow = parseInt(totalRows / 2);
     
 
-    var sourceIndex = [centerRow, 3];
-    var destIndex = [centerRow, parseInt(totalCols - 3)];
+    let sourceIndex = [centerRow, 3];
+    let destIndex = [centerRow, parseInt(totalCols - 3)];
 
-    var row = 0;
-    for(var i = 0; i < totalRows; i++) {
-        var col = 0;
-        var rowArray = new Array();
-        for(var j = 0; j < totalCols; j++) {
-            var block = makeNormalBlock(row, col, j, i);
+    let row = 0;
+    for(let i = 0; i < totalRows; i++) {
+        let col = 0;
+        let rowArray = new Array();
+        for(let j = 0; j < totalCols; j++) {
+            let block = makeNormalBlock(row, col, j, i);
             rowArray.push(block);
             col = col + BLOCK_DIMEN;
         }
@@ -57,7 +57,7 @@ function setSourceDest(sourceIndex, destIndex) {
 function makeSourceNode(ref) {
     //if (!pickingSourceNode) return;
     ref.meta.setBlockType(BlockType.SOURCE);
-    var anim = getScaleAnimation(PRIMARY_COLOR, PRIMARY_COLOR);
+    let anim = getScaleAnimation(PRIMARY_COLOR, PRIMARY_COLOR);
     ref.toFront();
     ref.animate(anim);
 }
@@ -65,7 +65,7 @@ function makeSourceNode(ref) {
 function makeDestNode(ref) {
     //if (!pickingDestNode) return;
     ref.meta.setBlockType(BlockType.DEST);
-    var anim = getScaleAnimation(ACCENT_COLOR, ACCENT_COLOR);
+    let anim = getScaleAnimation(ACCENT_COLOR, ACCENT_COLOR);
     ref.toFront();
     ref.animate(anim);
 }
@@ -74,7 +74,7 @@ function makeNormalAgain(ref) {
     ref.meta.setBlockType(BlockType.NORMAL);
     ref.meta.customWeight = 1;
 
-    var anim = getScaleAnimation(WHITE, WHITE);
+    let anim = getScaleAnimation(WHITE, WHITE);
     ref.toFront();
     ref.animate(anim);
 
@@ -100,12 +100,13 @@ function makeWeightedNode(ref) {
 }
 
 
-function makeWall(ref) {
+function makeWall(ref, isMazeCreating) {
+
     if(ref.meta.isSpecialBlock) return;
-    
-    ref.meta.setBlockType(BlockType.WALL);
-    if(mouseDown){
-        var anim = getScaleAnimation(GRAY, GRAY);
+    if(mouseDown || isMazeCreating){
+        ref.meta.setBlockType(BlockType.WALL);
+
+        let anim = getScaleAnimation(GRAY, GRAY);
         ref.toFront();
         ref.animate(anim);
     }
@@ -116,10 +117,8 @@ class MetaInfo {
         this.blockType = blockType;
         this.col = col;
         this.row = row;
-        this.isSpecialBlock = false;
-        if(blockType !== BlockType.NORMAL) {
-            this.isSpecialBlock = true;
-        }
+
+        this.isSpecialBlock = blockType !== BlockType.NORMAL;
     }
 
     setBlockType(blockType) {
@@ -133,18 +132,18 @@ class MetaInfo {
 }
 
 function makeNormalBlock(row, col, x, y) {
-    var block = paper.rect(col, row, BLOCK_DIMEN, BLOCK_DIMEN).attr({
+    let block = paper.rect(col, row, BLOCK_DIMEN, BLOCK_DIMEN).attr({
         fill: WHITE, 
         stroke: "#000",
         "stroke-width": 1,
         "stroke-opacity": 0.2
     });
     
-    var meta = new MetaInfo(BlockType.NORMAL, x, y);
+    let meta = new MetaInfo(BlockType.NORMAL, x, y);
 
     block.meta = meta;
     block.meta.customWeight = STOCK_WEIGHT;
-    var hoverIn = function(ele){
+    let hoverIn = function(ele){
         if (!mouseDown) return;
         if (block.meta.blockType !== BlockType.NORMAL) return; // dont override wall blocks
         
@@ -158,7 +157,7 @@ function makeNormalBlock(row, col, x, y) {
         }
     };
 
-    var hoverOut = function (ele) {
+    let hoverOut = function (ele) {
         if (block.meta.blockType === BlockType.SOURCE && pickingSourceNode) {
             makeNormalAgain(this);
         }

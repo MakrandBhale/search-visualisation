@@ -1,6 +1,7 @@
 let touchedNodes = [];
-
-
+let sleepTime = 100;
+const fConstant = 1;
+let report = document.getElementById("report");
 async function BFSSearch() {
     console.log("IN bfs search");
     const graph = getGraph();
@@ -12,7 +13,7 @@ async function BFSSearch() {
         alert("not found");
         return;
     }
-
+    report.innerText = "Total nodes checked " + touchedNodes.length;
     let temp = pathFound;
     while (temp.parent != null) {
         await sleep(50)
@@ -78,7 +79,7 @@ async function dfsSearch() {
         alert("Not found");
         return;
     }
-
+    report.innerText = "Total nodes checked " + touchedNodes.length;
     let temp = foundNode;
     
     while (temp !== null) {
@@ -132,7 +133,7 @@ async function dijkstraSearch() {
     if (foundNode === null) {
         alert("Not found");
     }
-
+    report.innerText = "Total nodes checked " + touchedNodes.length;
     let temp = foundNode;
     while (temp.parent != null) {
         await sleep(50)
@@ -170,6 +171,69 @@ async function dijkstra(priorityQueue, sourceNode, destNode) {
 
     return null;
 }
+
+
+async function aStarSearch() {
+    const graph = getGraph();
+    let sourceNode = graph.sourceNode;
+    let destNode = graph.destNode;
+
+    sourceNode.setFValue(destNode, 0);
+    let openList = new Queue();
+    let closedList = new Queue();
+    openList.enqueue(sourceNode);
+    let foundNode = await aStar(sourceNode, openList, closedList, destNode, 0);
+    if(foundNode === null) {
+        alert("Not Found")
+        return;
+    }
+    report.innerText = "Total nodes checked " + touchedNodes.length;
+
+
+    while (!closedList.isEmpty() && foundNode !== sourceNode) {
+        colorMeFound(foundNode);
+        foundNode = foundNode.parent;
+        await sleep(10);
+    }
+
+}
+
+async function aStar(parent, openList, closeList, destNode, iterCount) {
+    let bestNode = openList.getBestNode();
+
+
+    if(bestNode  === destNode) {
+        console.log("Goal found");
+        return destNode;
+    }
+
+    if(iterCount > 1000 ) {
+        return null;
+    }
+    if(!openList.contains(bestNode) && !closeList.contains(bestNode)){
+        touchedNodes.push(bestNode);
+        colorMeBlue(bestNode);
+        await sleep(sleepTime-50);
+        closeList.enqueue(bestNode);
+    }
+
+    let neighbours = bestNode.edgeList;
+    for(let i = 0; i < neighbours.length; i++) {
+        let neighbourNode = neighbours[i].dest;
+
+        if(!openList.contains(neighbourNode) && !closeList.contains(neighbourNode)){
+            neighbourNode.parent = bestNode;
+            //let edgeWeight = neighbourNode.weight;
+            neighbourNode.setFValue(destNode, neighbourNode.parent.f + fConstant);
+            openList.enqueue(neighbourNode);
+            //if(neighbourNode === destNode) return  neighbourNode;
+        }
+    }
+    return await aStar(bestNode, openList, closeList, destNode, (iterCount+1));
+}
+
+
+
 
 
 function sleep(ms) {

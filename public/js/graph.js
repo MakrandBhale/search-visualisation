@@ -43,7 +43,7 @@ class Node {
         this.visualBlock = visualBlock;
         this.row = row;
         this.col = col;
-        this.edgeList = new Array();
+        this.edgeList = [];
         this.visited = false;
         if (visualBlock.blockType === BlockType.SOURCE)
             this.cost = 0;
@@ -51,6 +51,30 @@ class Node {
             this.cost = initialCost;
     }
 
+    setFValue(destNode, parentF) {
+        this.heuristicValue = this.calculateManhattanDistance(this, destNode);
+        this.f =  this.heuristicValue + parentF;
+    }
+
+    calculateEucledianDistance(currentNode, destNode) {
+        let x1 = currentNode.col;
+        let y1 = currentNode.row;
+
+        let x2 = destNode.col;
+        let y2 = destNode.row;
+
+        return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
+    }
+
+    calculateManhattanDistance(currentNode, destNode) {
+        let x1 = currentNode.col;
+        let y1 = currentNode.row;
+
+        let x2 = destNode.col;
+        let y2 = destNode.row;
+
+        return(Math.abs(x1 - x2) + Math.abs(y1 - y2));
+    }
     addEdge(node, weight) {
          
         var edge = new Edge(this, node, weight);

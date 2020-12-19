@@ -15,14 +15,14 @@
         </div>-->
 
         <div class="container">
-            <lable for="algos">Choose an algorithm</lable>
+            <lable for="algos">Choose an algorithm
             <select id="algos" name="ids">
                 <option value="1">BFS search</option>
                 <option value="2">A* Algorithm</option>
                 <option value="3">Dijkstra</option>
                 <option value="4">DFS</option>
-
             </select>
+            </lable>
         </div>
         <div class="container">
             <label class="switch">
@@ -34,8 +34,13 @@
         <div class = "container">
             <button onclick="start()">Start!</button>
             <!-- <button onclick="redraw()">Reset</button> -->
-            <button onclick="test()">Test</button>
+<!--            <button onclick="createMaze()">Create Random Maze</button>-->
+<!--            <button onclick="test()">Test</button>-->
 
+        </div>
+
+        <div class = "container" >
+            <span id="report"></span>
         </div>
     </div>
     
@@ -50,6 +55,6 @@
 
     <script src="js/ds/PriorityQueue.js"></script>
     <script src="js/algo.js"></script>
-    
+    <script src="js/maze.js"></script>
 </body>
 </html>
